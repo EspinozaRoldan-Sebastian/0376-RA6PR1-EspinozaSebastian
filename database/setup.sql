@@ -32,6 +32,27 @@ CREATE TABLE IF NOT EXISTS time_entries (
     INDEX idx_user_date (user_id, clock_in)
 ) ENGINE=InnoDB;
 
+-- Taula Projectes
+CREATE TABLE IF NOT EXISTS projects (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) NOT NULL,
+    description TEXT NULL,
+    client VARCHAR(100) NOT NULL,
+    budgeted_hours DECIMAL(7,2) NOT NULL DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Taula associació Usuari -> Projecte (per assignacions)
+CREATE TABLE IF NOT EXISTS user_projects (
+    user_id INT NOT NULL,
+    project_id INT NOT NULL,
+    PRIMARY KEY (user_id, project_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- Usuari Admin per defecte: email: admin@worktracker.local / contrasenya: admin123
 INSERT IGNORE INTO users (name, email, password, role) VALUES 
 ('Administrador', 'admin@worktracker.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),
