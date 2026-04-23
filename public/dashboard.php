@@ -1,0 +1,139 @@
+<?php
+require_once __DIR__ . '/../config/auth.php';
+requireAuth();
+
+$user = currentUser();
+
+// Comprovar si l'usuari ja ha fitxat entrada avui
+$stmt = db()->prepare("SELECT * FROM time_entries WHERE user_id = ? AND DATE(clock_in) = CURDATE() AND clock_out IS NULL ORDER BY clock_in DESC LIMIT 1");
+$stmt->execute([$user['id']]);
+$activeEntry = $stmt->fetch();
+
+// Acció fitxar
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['clock_in']) && !$activeEntry) {
+        // Fitxar entrada
+        $insert = db()->prepare("INSERT INTO time_entries (user_id, clock_in) VALUES (?, NOW())");
+        $insert->execute([$user['id']]);
+        header("Location: dashboard.php");
+        exit;
+    }
+
+    if (isset($_POST['clock_out']) && $activeEntry) {
+        // Fitxar sortida i calcular hores
+        $update = db()->prepare("UPDATE time_entries SET clock_out = NOW(), total_hours = TIMESTAMPDIFF(SECOND, clock_in, NOW()) / 3600 WHERE id = ?");
+        $update->execute([$activeEntry['id']]);
+        header("Location: dashboard.php");
+        exit;
+    }
+
+    if (isset($_POST['logout'])) {
+        logout();
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WorkTracker</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" />
+                        </svg>
+                    </div>
+                    WorkTracker
+                </div>
+
+                <form method="POST">
+                    <button type="submit" name="logout" style="background: none; border: none; color: var(--gray-600); cursor: pointer; font-weight: 500;">
+                        Tancar sessió
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="dashboard-greeting text-center">
+            <h1>Hola, <?php echo htmlspecialchars($user['name']) ?> 👋</h1>
+            <div class="current-time" id="currentTime"></div>
+
+            <?php if ($activeEntry): ?>
+                <div class="status-badge status-active">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                    </svg>
+                    Estàs fitxat des de <?php echo date('H:i', strtotime($activeEntry['clock_in'])) ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <form method="POST">
+            <?php if (!$activeEntry): ?>
+                <button type="submit" name="clock_in" class="btn btn-clock btn-clock-in">
+                    ⏰ Entrar
+                </button>
+            <?php else: ?>
+                <button type="submit" name="clock_out" class="btn btn-clock btn-clock-out">
+                    ⏹ Sortir
+                </button>
+            <?php endif; ?>
+        </form>
+
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; margin-top: 2rem;">
+            <h3>Últims fitxatges d'avui</h3>
+
+            <?php
+            $stmt = db()->prepare("SELECT * FROM time_entries WHERE user_id = ? AND DATE(clock_in) = CURDATE() ORDER BY clock_in DESC");
+            $stmt->execute([$user['id']]);
+            $entries = $stmt->fetchAll();
+
+            if (count($entries) > 0):
+            ?>
+            <div style="margin-top: 1rem;">
+                <?php foreach ($entries as $entry): ?>
+                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-200);">
+                    <div>
+                        <strong><?php echo date('H:i', strtotime($entry['clock_in'])) ?></strong>
+                        <?php if ($entry['clock_out']): ?>
+                        → <strong><?php echo date('H:i', strtotime($entry['clock_out'])) ?></strong>
+                        <?php endif; ?>
+                    </div>
+                    <div>
+                        <?php if ($entry['total_hours']): ?>
+                        <?php echo number_format($entry['total_hours'], 2) ?> hores
+                        <?php else: ?>
+                        <em>En curs</em>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php else: ?>
+            <p style="color: var(--gray-500); margin-top: 1rem;">Encara no has fet cap fitxatge avui.</p>
+            <?php endif; ?>
+        </div>
+    </main>
+
+    <script>
+        // Actualitzar hora en temps real
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
