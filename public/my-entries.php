@@ -18,12 +18,34 @@ $entries->execute([$user['id']]);
 $entries = $entries->fetchAll();
 
 include __DIR__ . '/partials/header.php';
+
+// Afegir link my-entries al menú si estem en aquesta pàgina
+?>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const menu = document.querySelector('.header-inner > div:last-child');
+    const links = menu.querySelectorAll('a');
+    let dashboardLink = null;
+    links.forEach(l => {
+        if (l.textContent.includes('Inici')) dashboardLink = l;
+    });
+    if (dashboardLink) {
+        const entriesLink = document.createElement('a');
+        entriesLink.href = 'my-entries.php';
+        entriesLink.className = 'btn btn-sm btn-primary';
+        entriesLink.style.width = 'auto';
+        entriesLink.textContent = 'Els meus fitxatges';
+        dashboardLink.className = 'btn btn-sm btn-outline';
+        dashboardLink.after(entriesLink);
+    }
+});
+</script>
 ?>
 
-<div class="container mt-3">
-    <h1>Els meus fitxatges</h1>
+<div class="container page">
+    <h1 class="page-title">Els meus fitxatges</h1>
 
-    <div style="background: white; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+    <div class="card">
         <div class="table-wrapper" style="border: 0;">
             <table class="table">
                 <thead>

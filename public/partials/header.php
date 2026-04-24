@@ -12,7 +12,7 @@ if (!isset($user)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkTracker</title>
-    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <header class="header">
@@ -37,7 +37,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <?php endif; ?>
                     <a href="dashboard.php" class="btn btn-sm <?php echo $currentPage == 'dashboard.php' ? 'btn-primary' : 'btn-outline' ?>" style="width: auto;">Inici</a>
                     <a href="profile.php" class="btn btn-sm <?php echo $currentPage == 'profile.php' ? 'btn-primary' : 'btn-outline' ?>" style="width: auto;">Perfil</a>
-                    <form method="POST" style="display: inline; margin-left: 1rem;">
+                    <form method="POST" action="/0376-RA6PR1-EspinozaSebastian/public/dashboard.php" style="display: inline; margin-left: 1rem;">
                         <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
                         <button type="submit" name="logout" class="btn btn-sm btn-outline" style="width: auto;">Tancar sessió</button>
                     </form>

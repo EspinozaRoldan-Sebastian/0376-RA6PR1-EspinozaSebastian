@@ -57,74 +57,115 @@ $stmt = db()->prepare("SELECT name, email, department, created_at FROM users WHE
 $stmt->execute([$user['id']]);
 $userData = $stmt->fetch();
 
-include __DIR__ . '/partials/header.php';
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El meu Perfil - WorkTracker</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="dashboard.php" class="logo">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" />
+                        </svg>
+                    </div>
+                    WorkTracker
+                </a>
 
-<div class="container mt-3">
-    <h1>El meu Perfil</h1>
-
-    <?php if ($success): ?>
-    <div style="background: #dcfce7; color: #166534; padding: 0.875rem; border-radius: 8px; margin-bottom: 1rem;">
-        <?php echo e($success) ?>
-    </div>
-    <?php endif; ?>
-
-    <?php if ($error): ?>
-    <div style="background: #fef2f2; color: #dc2626; padding: 0.875rem; border-radius: 8px; margin-bottom: 1rem;">
-        <?php echo e($error) ?>
-    </div>
-    <?php endif; ?>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-        <div style="background: white; padding: 1.5rem; border-radius: 12px;">
-            <h3 class="mb-3">Dades del perfil</h3>
-            <form method="POST">
-                <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
-                
-                <div class="form-group">
-                    <label class="form-label">Nom</label>
-                    <input type="text" name="name" class="form-input" value="<?php echo e($userData['name']) ?>" required>
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <?php if (hasRole(ROLE_ADMIN)): ?>
+                    <a href="admin/index.php" class="btn btn-sm btn-outline" style="width: auto;">Admin</a>
+                    <?php endif; ?>
+                    <a href="dashboard.php" class="btn btn-sm btn-outline" style="width: auto;">Inici</a>
+                    <a href="my-entries.php" class="btn btn-sm btn-outline" style="width: auto;">Els meus fitxatges</a>
+                    <a href="profile.php" class="btn btn-sm btn-primary" style="width: auto;">Perfil</a>
+                    <form method="POST" action="/0376-RA6PR1-EspinozaSebastian/public/dashboard.php" style="display: inline; margin-left: 1rem;">
+                        <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
+                        <button type="submit" name="logout" class="btn btn-sm btn-outline" style="width: auto;">Tancar sessió</button>
+                    </form>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">Correu electrònic</label>
-                    <input type="email" class="form-input" value="<?php echo e($userData['email']) ?>" disabled>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Departament</label>
-                    <input type="text" name="department" class="form-input" value="<?php echo e($userData['department']) ?>">
-                </div>
-
-                <button type="submit" name="update_profile" class="btn btn-primary">Desar canvis</button>
-            </form>
+            </div>
         </div>
+    </header>
 
-        <div style="background: white; padding: 1.5rem; border-radius: 12px;">
-            <h3 class="mb-3">Canviar contrasenya</h3>
-            <form method="POST">
-                <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
-                
-                <div class="form-group">
-                    <label class="form-label">Contrasenya actual</label>
-                    <input type="password" name="current_password" class="form-input" required>
-                </div>
+    <div class="container page">
+        <h1 class="page-title">El meu Perfil</h1>
 
-                <div class="form-group">
-                    <label class="form-label">Nova contrasenya</label>
-                    <input type="password" name="new_password" class="form-input" required>
-                </div>
+        <?php if ($success): ?>
+        <div class="alert alert-success">
+            <?php echo e($success) ?>
+        </div>
+        <?php endif; ?>
 
-                <div class="form-group">
-                    <label class="form-label">Confirmar nova contrasenya</label>
-                    <input type="password" name="confirm_password" class="form-input" required>
-                </div>
+        <?php if ($error): ?>
+        <div class="alert alert-danger">
+            <?php echo e($error) ?>
+        </div>
+        <?php endif; ?>
 
-                <button type="submit" name="change_password" class="btn btn-primary">Canviar contrasenya</button>
-            </form>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            
+            <!-- CARD 1: DADES DEL PERFIL -->
+            <div class="card">
+                <h3 class="mb-3">Dades del perfil</h3>
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Nom</label>
+                        <input type="text" name="name" class="form-input" value="<?php echo e($userData['name']) ?>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Correu electrònic</label>
+                        <input type="email" class="form-input" value="<?php echo e($userData['email'] ?? '') ?>" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Departament</label>
+                        <input type="text" name="department" class="form-input" value="<?php echo e($userData['department'] ?? '') ?>">
+                    </div>
+
+                    <button type="submit" name="update_profile" class="btn btn-primary">Desar canvis</button>
+                </form>
+            </div>
+
+            <!-- CARD 2: CANVIAR CONTRASENYA -->
+            <div class="card">
+                <h3 class="mb-3">Canviar contrasenya</h3>
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contrasenya actual</label>
+                        <input type="password" name="current_password" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nova contrasenya</label>
+                        <input type="password" name="new_password" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirmar nova contrasenya</label>
+                        <input type="password" name="confirm_password" class="form-input" required>
+                    </div>
+
+                    <button type="submit" name="change_password" class="btn btn-primary">Canviar contrasenya</button>
+                </form>
+            </div>
+
         </div>
     </div>
-</div>
 
 </body>
 </html>

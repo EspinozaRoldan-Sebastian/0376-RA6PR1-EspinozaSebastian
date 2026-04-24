@@ -31,7 +31,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <div>
                     <span style="margin-right: 1rem; color: var(--gray-600);"><?php echo htmlspecialchars(currentUser()['name']) ?></span>
                     <a href="../dashboard.php" style="color: var(--gray-600); margin-right: 1rem; text-decoration: none;">← Tornar</a>
-                    <form method="POST" style="display: inline;">
+                    <form method="POST" action="/0376-RA6PR1-EspinozaSebastian/public/dashboard.php" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
                         <button type="submit" name="logout" style="background: none; border: none; color: var(--gray-600); cursor: pointer; font-weight: 500;">
                             Sortir
                         </button>

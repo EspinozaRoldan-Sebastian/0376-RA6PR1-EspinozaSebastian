@@ -323,6 +323,72 @@ body {
 .badge-active { background: var(--primary-light); color: var(--primary-dark); }
 .badge-inactive { background: var(--gray-100); color: var(--gray-600); }
 
+/* Page Layout */
+.page {
+    padding: 2rem 0;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+}
+
+/* Tables */
+.table th {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    border: 0;
+}
+
+.table tr:nth-child(even) {
+    background: var(--gray-50);
+}
+
+.table tr:hover {
+    background: var(--primary-light);
+}
+
+/* Alert Messages */
+.alert {
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+    border-left: 4px solid var(--primary);
+}
+
+.alert-danger {
+    background: #fef2f2;
+    color: #dc2626;
+    border-left: 4px solid var(--danger);
+}
+
+/* Form Improvements */
+.form-input {
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29, 158, 117, 0.15);
+}
+
 /* Responsive Desktop */
 @media (min-width: 768px) {
     .btn-clock {

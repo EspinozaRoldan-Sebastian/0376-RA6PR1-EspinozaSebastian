@@ -36,9 +36,9 @@ $projects = db()->query("SELECT * FROM projects ORDER BY created_at DESC")->fetc
 include __DIR__ . '/header.php';
 ?>
 
-<div class="container mt-3">
+<div class="container page">
+    <h1 class="page-title">Gestió de Projectes</h1>
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h1>Gestió de Projectes</h1>
         <button onclick="document.getElementById('createModal').style.display='block'" class="btn btn-primary btn-sm">+ Nou projecte</button>
     </div>
 
