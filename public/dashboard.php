@@ -55,11 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     WorkTracker
                 </div>
 
-                <form method="POST">
-                    <button type="submit" name="logout" style="background: none; border: none; color: var(--gray-600); cursor: pointer; font-weight: 500;">
-                        Tancar sessió
-                    </button>
-                </form>
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    <a href="profile.php" style="color: var(--gray-600); text-decoration: none; font-weight: 500;">El meu perfil</a>
+                    <?php if (hasRole(ROLE_ADMIN)): ?>
+                    <a href="admin/index.php" style="color: var(--primary); text-decoration: none; font-weight: 600;">Admin</a>
+                    <?php endif; ?>
+                    <form method="POST">
+                        <button type="submit" name="logout" style="background: none; border: none; color: var(--gray-600); cursor: pointer; font-weight: 500;">
+                            Tancar sessió
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </header>
@@ -77,6 +83,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Estàs fitxat des de <?php echo date('H:i', strtotime($activeEntry['clock_in'])) ?>
                 </div>
             <?php endif; ?>
+        </div>
+
+        <?php
+        // Estadístiques hores setmana i mes
+        $weekHours = db()->prepare("SELECT COALESCE(SUM(total_hours), 0) FROM time_entries WHERE user_id = ? AND YEARWEEK(clock_in, 1) = YEARWEEK(NOW(), 1)");
+        $weekHours->execute([$user['id']]);
+        $weekTotal = $weekHours->fetchColumn();
+
+        $monthHours = db()->prepare("SELECT COALESCE(SUM(total_hours), 0) FROM time_entries WHERE user_id = ? AND MONTH(clock_in) = MONTH(NOW()) AND YEAR(clock_in) = YEAR(NOW())");
+        $monthHours->execute([$user['id']]);
+        $monthTotal = $monthHours->fetchColumn();
+        ?>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0 1rem;">
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--primary); text-align: center;">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--primary);"><?php echo number_format($weekTotal, 1) ?></div>
+                <div style="color: var(--gray-600); font-weight: 500;">Hores aquesta setmana</div>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--primary); text-align: center;">
+                <div style="font-size: 2rem; font-weight: 700; color: var(--primary);"><?php echo number_format($monthTotal, 1) ?></div>
+                <div style="color: var(--gray-600); font-weight: 500;">Hores aquest mes</div>
+            </div>
         </div>
 
         <form method="POST">

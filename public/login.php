@@ -8,11 +8,27 @@ if (isLoggedIn()) {
 
 $error = '';
 
+require_once __DIR__ . '/../config/security.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!csrf_validate($_POST['csrf_token'])) {
+        die("Petició invàlida");
+    }
+
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (login($email, $password)) {
+    if (!validate_email($email)) {
+        $error = "Format de correu invàlid";
+    } elseif (login($email, $password)) {
+        // Recordar-me
+        if (isset($_POST['remember_me'])) {
+            try {
+                set_remember_me($_SESSION['user_id']);
+            } catch (Exception $e) {
+                // Ignorar error de cookie, continuar login normal
+            }
+        }
         header("Location: dashboard.php");
         exit;
     } else {
@@ -65,6 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="form-label">Contrasenya</label>
                     <input type="password" name="password" class="form-input" required autocomplete="current-password">
                 </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" name="remember_me" id="remember_me">
+                    <label for="remember_me" style="margin: 0; font-weight: 500; color: var(--gray-600);">Recuérdame 7 dies</label>
+                </div>
+
+                <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
 
                 <button type="submit" class="btn btn-primary">Entrar</button>
             </form>
