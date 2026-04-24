@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../config/security.php';
 requireAuth();
 
 $user = currentUser();
@@ -56,14 +57,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 1.5rem;">
-                    <a href="profile.php" style="color: var(--gray-600); text-decoration: none; font-weight: 500;">El meu perfil</a>
+<?php
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                     <?php if (hasRole(ROLE_ADMIN)): ?>
-                    <a href="admin/index.php" style="color: var(--primary); text-decoration: none; font-weight: 600;">Admin</a>
+                    <a href="admin/index.php" class="btn btn-sm btn-outline" style="width: auto;">Admin</a>
                     <?php endif; ?>
-                    <form method="POST">
-                        <button type="submit" name="logout" style="background: none; border: none; color: var(--gray-600); cursor: pointer; font-weight: 500;">
-                            Tancar sessió
-                        </button>
+                    <a href="dashboard.php" class="btn btn-sm btn-primary" style="width: auto;">Inici</a>
+                    <a href="my-entries.php" class="btn btn-sm btn-outline" style="width: auto;">Els meus fitxatges</a>
+                    <a href="profile.php" class="btn btn-sm btn-outline" style="width: auto;">Perfil</a>
+                    <form method="POST" style="display: inline; margin-left: 1rem;">
+                        <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
+                        <button type="submit" name="logout" class="btn btn-sm btn-outline" style="width: auto;">Tancar sessió</button>
                     </form>
                 </div>
             </div>
