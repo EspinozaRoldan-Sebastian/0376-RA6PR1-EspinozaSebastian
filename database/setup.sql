@@ -23,13 +23,16 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS time_entries (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
+    project_id INT NULL,
     clock_in DATETIME NOT NULL,
     clock_out DATETIME NULL,
     total_hours DECIMAL(5,2) NULL,
     notes TEXT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user_date (user_id, clock_in)
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,
+    INDEX idx_user_date (user_id, clock_in),
+    INDEX idx_project (project_id)
 ) ENGINE=InnoDB;
 
 -- Taula Projectes

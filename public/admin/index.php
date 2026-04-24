@@ -35,11 +35,65 @@ include __DIR__ . '/header.php';
         </div>
     </div>
 
-    <div style="background: white; padding: 1.5rem; border-radius: 12px;">
-        <h3>Benvingut al panell d'administració</h3>
-        <p style="color: var(--gray-600); margin-top: 0.5rem;">
-            Des d'aquí pots gestionar tots els usuaris, projectes i veure els reports generals de l'empresa.
-        </p>
+    <!-- Alertes d'incompliment -->
+    <div style="background: white; padding: 1.5rem; border-radius: 12px; margin-top: 2rem;">
+        <h3 style="color: var(--danger);">⚠️ Alertes d'incompliment avui</h3>
+
+        <?php
+        // Empleats que NO han fitxat encara avui
+        $missing = db()->query("
+            SELECT id, name FROM users 
+            WHERE role = 3 AND is_active = 1 
+            AND id NOT IN (SELECT DISTINCT user_id FROM time_entries WHERE DATE(clock_in) = CURDATE())
+        ")->fetchAll();
+
+        // Empleats amb menys de 8 hores
+        $underHours = db()->query("
+            SELECT u.name, SUM(te.total_hours) as total 
+            FROM users u
+            JOIN time_entries te ON u.id = te.user_id
+            WHERE u.role = 3 AND DATE(te.clock_in) = CURDATE() AND te.clock_out IS NOT NULL
+            GROUP BY u.id
+            HAVING total < 8
+        ")->fetchAll();
+        ?>
+
+        <?php if (count($missing) > 0): ?>
+        <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: #dc2626;">❌ Empleats sense fitxar entrada</h4>
+        <div class="table-wrapper" style="border: 0;">
+            <table class="table">
+                <tbody>
+                    <?php foreach ($missing as $emp): ?>
+                    <tr style="background: #fef2f2;">
+                        <td><strong style="color: #dc2626;"><?php echo htmlspecialchars($emp['name']) ?></strong></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+
+        <?php if (count($underHours) > 0): ?>
+        <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: #d97706;">⚠️ Empleats amb menys de 8 hores</h4>
+        <div class="table-wrapper" style="border: 0;">
+            <table class="table">
+                <tbody>
+                    <?php foreach ($underHours as $emp): ?>
+                    <tr style="background: #fffbeb;">
+                        <td><strong><?php echo htmlspecialchars($emp['name']) ?></strong></td>
+                        <td style="color: #d97706;"><?php echo number_format($emp['total'], 1) ?> hores</td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
+
+        <?php if (count($missing) == 0 && count($underHours) == 0): ?>
+        <div style="text-align: center; padding: 2rem; color: var(--success);">
+            ✅ Tots els empleats estan al dia avui
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 

@@ -21,8 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['clock_out']) && $activeEntry) {
         // Fitxar sortida i calcular hores
-        $update = db()->prepare("UPDATE time_entries SET clock_out = NOW(), total_hours = TIMESTAMPDIFF(SECOND, clock_in, NOW()) / 3600 WHERE id = ?");
-        $update->execute([$activeEntry['id']]);
+        $projectId = isset($_POST['project_id']) && $_POST['project_id'] > 0 ? intval($_POST['project_id']) : null;
+        $update = db()->prepare("UPDATE time_entries SET clock_out = NOW(), total_hours = TIMESTAMPDIFF(SECOND, clock_in, NOW()) / 3600, project_id = ? WHERE id = ?");
+        $update->execute([$projectId, $activeEntry['id']]);
         header("Location: dashboard.php");
         exit;
     }
@@ -84,6 +85,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ⏰ Entrar
                 </button>
             <?php else: ?>
+
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <label class="form-label">Selecciona el projecte on has treballat:</label>
+                    <select name="project_id" class="form-input">
+                        <option value="">Sense projecte assignat</option>
+                        <?php
+                        $projects = db()->query("SELECT id, name FROM projects WHERE is_active = 1 ORDER BY name")->fetchAll();
+                        foreach ($projects as $p):
+                        ?>
+                        <option value="<?php echo $p['id'] ?>"><?php echo htmlspecialchars($p['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <button type="submit" name="clock_out" class="btn btn-clock btn-clock-out">
                     ⏹ Sortir
                 </button>
