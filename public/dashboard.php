@@ -115,7 +115,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
         <form method="POST">
             <?php if (!$activeEntry): ?>
-                <button type="submit" name="clock_in" class="btn btn-clock btn-clock-in">
+                <button type="submit" name="clock_in" class="btn btn-clock btn-clock-in" style="width: 100%; display: block;">
                     ⏰ Entrar
                 </button>
             <?php else: ?>
@@ -133,7 +133,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     </select>
                 </div>
 
-                <button type="submit" name="clock_out" class="btn btn-clock btn-clock-out">
+                <button type="submit" name="clock_out" class="btn btn-clock btn-clock-out" style="width: 100%; display: block;">
                     ⏹ Sortir
                 </button>
             <?php endif; ?>
