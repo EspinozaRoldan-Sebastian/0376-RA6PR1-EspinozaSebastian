@@ -63,7 +63,26 @@ function requireAuth(?int $requiredRole = null): void {
 
     if ($requiredRole !== null && !hasRole($requiredRole)) {
         http_response_code(403);
-        die("Accés prohibit");
+        ?>
+        <!DOCTYPE html>
+        <html lang="ca">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Accés prohibit - WorkTracker</title>
+            <link rel="stylesheet" href="/0376-RA6PR1-EspinozaSebastian/assets/css/style.css">
+        </head>
+        <body style="background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+            <div class="card" style="max-width: 450px; text-align: center; padding: 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+                <h1 style="color: var(--danger); margin-bottom: 1rem;">Accés prohibit</h1>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">No tens permisos per accedir a aquesta pàgina.</p>
+                <a href="/0376-RA6PR1-EspinozaSebastian/public/dashboard.php" class="btn btn-primary" style="width: auto;">Tornar a l'inici</a>
+            </div>
+        </body>
+        </html>
+        <?php
+        exit;
     }
 }
 
