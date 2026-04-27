@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../config/auth.php';
+require_once __DIR__ . '/../../config/security.php';
 requireAuth(ROLE_ADMIN);
 
 $roles = [
@@ -32,6 +33,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: users.php");
         exit;
     }
+
+    // Eliminar usuari
+    if (isset($_POST['delete'])) {
+        if (!csrf_validate($_POST['csrf_token'])) {
+            die("Petició invàlida");
+        }
+        $userId = intval($_POST['id']);
+        // No es pot eliminar a si mateix
+        if ($userId != $_SESSION['user_id']) {
+            $stmt = db()->prepare("DELETE FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+        }
+        header("Location: users.php?deleted=1");
+        exit;
+    }
 }
 
 // Obtenir tots els usuaris
@@ -47,9 +63,11 @@ include __DIR__ . '/header.php';
     </div>
 
     <?php if (isset($_GET['success'])): ?>
-    <div style="background: #dcfce7; color: #166534; padding: 0.875rem; border-radius: 8px; margin-bottom: 1rem;">
-        Usuari creat correctament
-    </div>
+    <div class="alert alert-success">Usuari creat correctament</div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['deleted'])): ?>
+    <div class="alert alert-success">Usuari eliminat correctament</div>
     <?php endif; ?>
 
     <div class="table-wrapper">
@@ -84,6 +102,13 @@ include __DIR__ . '/header.php';
                             </button>
                         </form>
                         <a href="edit-user.php?id=<?php echo $user['id'] ?>" class="btn btn-sm btn-outline" style="margin-left: 0.5rem;">Editar</a>
+                        <?php if ($user['id'] != $_SESSION['user_id']): ?>
+                        <form method="POST" style="display: inline; margin-left: 0.5rem;" onsubmit="return confirm('Estàs segur que vols eliminar aquest usuari? Aquesta acció no es pot desfer.')">
+                            <input type="hidden" name="csrf_token" value="<?php echo csrf_token() ?>">
+                            <input type="hidden" name="id" value="<?php echo $user['id'] ?>">
+                            <button type="submit" name="delete" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
