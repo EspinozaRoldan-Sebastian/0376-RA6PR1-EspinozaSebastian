@@ -12,7 +12,7 @@ if (!isset($user)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkTracker</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="/0376-RA6PR1-EspinozaSebastian/assets/css/style.css">
 </head>
 <body>
     <header class="header">
@@ -38,6 +38,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <a href="dashboard.php" class="btn btn-sm <?php echo $currentPage == 'dashboard.php' ? 'btn-primary' : 'btn-outline' ?>" style="width: auto;">Inici</a>
                     <?php if (hasRole(ROLE_MANAGER) || hasRole(ROLE_ADMIN)): ?>
                     <a href="/0376-RA6PR1-EspinozaSebastian/public/manager/team.php" class="btn btn-sm <?php echo str_contains($_SERVER['REQUEST_URI'], '/manager/') ? 'btn-primary' : 'btn-outline' ?>" style="width: auto;">Mi Equipo</a>
+                    <a href="/0376-RA6PR1-EspinozaSebastian/public/manager/projects.php" class="btn btn-sm btn-outline" style="width: auto;">Projectes</a>
+                    <a href="/0376-RA6PR1-EspinozaSebastian/public/admin/reports.php" class="btn btn-sm btn-outline" style="width: auto;">Reports</a>
                     <?php endif; ?>
                     <a href="profile.php" class="btn btn-sm <?php echo $currentPage == 'profile.php' ? 'btn-primary' : 'btn-outline' ?>" style="width: auto;">Perfil</a>
                     <form method="POST" action="/0376-RA6PR1-EspinozaSebastian/public/dashboard.php" style="display: inline; margin-left: 1rem;">

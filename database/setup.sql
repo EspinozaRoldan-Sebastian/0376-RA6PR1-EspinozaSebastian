@@ -56,6 +56,13 @@ CREATE TABLE IF NOT EXISTS user_projects (
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Taula Departaments
+CREATE TABLE IF NOT EXISTS departments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 -- Usuari Admin per defecte: email: admin@worktracker.local / contrasenya: admin123
 INSERT IGNORE INTO users (name, email, password, role) VALUES 
 ('Administrador', 'admin@worktracker.local', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1),

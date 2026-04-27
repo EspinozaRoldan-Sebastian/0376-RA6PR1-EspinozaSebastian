@@ -83,7 +83,7 @@ include __DIR__ . '/header.php';
                                 <?php echo $user['is_active'] ? 'Desactivar' : 'Activar' ?>
                             </button>
                         </form>
-                        <button class="btn btn-sm btn-outline" style="margin-left: 0.5rem;">Editar</button>
+                        <a href="edit-user.php?id=<?php echo $user['id'] ?>" class="btn btn-sm btn-outline" style="margin-left: 0.5rem;">Editar</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>

@@ -71,7 +71,7 @@ include __DIR__ . '/header.php';
                         </span>
                     </td>
                     <td style="text-align: right;">
-                        <button class="btn btn-sm btn-outline">Editar</button>
+                        <a href="edit-project.php?id=<?php echo $project['id'] ?>" class="btn btn-sm btn-outline">Editar</a>
                         <form method="POST" style="display: inline;" onsubmit="return confirm('Segur que vols eliminar aquest projecte?')">
                             <input type="hidden" name="id" value="<?php echo $project['id'] ?>">
                             <button type="submit" name="delete" class="btn btn-sm btn-danger" style="margin-left: 0.5rem;">Eliminar</button>
