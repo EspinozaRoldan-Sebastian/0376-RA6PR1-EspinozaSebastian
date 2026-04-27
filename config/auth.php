@@ -51,7 +51,7 @@ function currentUser() {
 
 // Funció comprovar rol
 function hasRole(int $role): bool {
-    return isLoggedIn() && $_SESSION['user_role'] === $role;
+    return isLoggedIn() && $_SESSION['user_role'] == $role;
 }
 
 // Funció protegir pàgines

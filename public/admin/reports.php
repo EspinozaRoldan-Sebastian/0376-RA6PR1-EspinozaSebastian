@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../../config/auth.php';
-requireAuth(ROLE_ADMIN);
+// Reports accessibles per Admin i Manager
+if (!hasRole(ROLE_ADMIN) && !hasRole(ROLE_MANAGER)) {
+    http_response_code(403);
+    die("Accés prohibit");
+}
 
 // Filtres
 $period = $_GET['period'] ?? 'week';

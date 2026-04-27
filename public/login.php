@@ -91,12 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit" class="btn btn-primary">Entrar</button>
             </form>
-
-            <div class="text-center mt-3" style="color: var(--gray-500); font-size: 0.875rem;">
-                <p>Usuaris de prova:</p>
-                <p>admin@worktracker.local / admin123</p>
-                <p>empleat@worktracker.local / admin123</p>
-            </div>
         </div>
     </main>
 </body>
